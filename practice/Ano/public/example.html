@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./javascripts/jquery.min.js"></script>
+    <style>
+        html, body {
+            height: 98%;
+        }
+        #main-body {
+            width: 100%;
+            height: 80%;
+            display: flex;
+            align-items: center;
+        }
+        #form-body {
+            height: 300px;
+            width: 700px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            border: solid 2px gray;
+            border-radius: 6px;
+            position: relative;
+            background-color: whitesmoke;
+        }
+        .bg-blur {
+            position: absolute;
+            width: 1000px;
+            height: 1000px;
+            margin: -10px;
+            background-color: white;
+            opacity: .4;
+        }
+        .form-box {
+            z-index: 11;
+            margin: auto;
+            padding: 30px;
+            border-radius: 4px;
+        }
+        form input, label {
+            font-size: 1.3em;
+            padding: 10px;
+        }
+        form input {
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="main-body">
+    <div id="form-body">
+        <img class="bg-blur" src="./images/bg.jpeg"
+             style="height: auto; width: auto; max-width: 800px; filter: blur(3px); position: absolute" alt="">
+        <div class="form-box">
+            <form>
+                <table>
+                    <tr>
+                        <td width="80px" height="55px"><label>账 号</label></td>
+                        <td>
+                            <input name="UserNo" id="UserNo" maxlength="25" placeholder="ID">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="150px" height="55px"><label>密 码</label></td>
+                        <td>
+                            <input name="password" id="password" type="password" maxlength="25" placeholder="password">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td height="55px">
+                            <input type="button" onclick="check();" value="登录"
+                                   style="text-align: center; width: 100%;">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<footer style="text-align: center; font-size: 0.9em;bottom: 10px;margin-top: 11%;">
+    <p>
+        显示器分辨率要求≥1024*768。使用Firefox浏览器（<a href="http://ftp.mozilla.org/" target="_blank">官网下载</a>），
+        <wbr>可以获得最佳显示效果，Chrome次之，IE浏览器要求10或以上版本，其他浏览器较慢且有卡顿现象。
+    </p>
+</footer>
+
+</body>
+</html>
