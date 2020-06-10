@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8" content="text/html">
+    <title>图书检索网站</title>
+    <script src="./public/javascript/jquery.min.js"></script>
+    <style>
+        .input input {
+            color: blue;
+            width: 98%;
+        }
+
+        .button {
+            width: 100px;
+        }
+
+        [disabled] {
+            background: lightgray;
+            border: 1px lightgray;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <p></p>
+    <table border="1" style="/*border-collapse: collapse*/">
+        <tr>
+            <td class="label" style="width: 100px;">书号</td>
+            <td class="input" style="width: 500px;"><input type="number" id="book-number"></td>
+            <td class="disc" style="width: 300px;">
+                <input type="button" id="button-search" class="button" value="获取记录">
+                <input type="button" id="button-continue" class="button" value="继续检索" disabled>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">书名</td>
+            <td class="input"><input id="book-name" class="input" disabled></td>
+            <td class="disc">1~100个字符，不能包括单双引号</td>
+        </tr>
+        <tr>
+            <td class="label">价格</td>
+            <td class="input"><input id="book-price" class="input" disabled></td>
+            <td class="disc">计量单位：人民币元</td>
+        </tr>
+        <tr>
+            <td colspan="3">提示：返回结果为0表示图书不存在，1表示图书存在</td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+       $('#button-search').click(search);
+       $('#button-continue').click(con);
+    });
+
+    function search() {
+        let id = $('#book-number').val();
+        if (id === '') {
+            alert('请输入书号。');
+            return
+        } else {
+            id = parseInt(id);
+        }
+
+        if (id > 1000 || id < 1) {
+            alert("请输入书号: 1~1000。");
+        } else {
+            getBook(id, disableButtons);
+        }
+    }
+
+    function con() {
+        enableButtons();
+        $('#book-name').val('');
+        $('#book-price').val('');
+    }
+
+    function disableButtons() {
+        $('#book-number').prop('disabled', true);
+        $('#button-search').prop('disabled', true);
+        $('#button-continue').prop('disabled', false);
+        $('#book-price').prop('disabled', false);
+        $('#book-name').prop('disabled', false);
+    }
+
+    function enableButtons() {
+        $('#book-number').prop('disabled', false);
+        $('#button-search').prop('disabled', false);
+        $('#button-continue').prop('disabled', true);
+        $('#book-price').prop('disabled', true);
+        $('#book-name').prop('disabled', true);
+    }
+
+    function getBook(bookId, succCallback) {
+        $.ajax({
+            type: 'GET',
+            url: '/obtain',
+            data: {
+                bookId
+            },
+            dataType: "json",
+            error: function (err) {
+                alert('网络错误:\n' + err.value)
+            },
+            success: function (data) {
+                if (data.ok === 0)
+                    alert("没有该编号的书。");
+                else {
+                    alert("已获取相应信息");
+                    fillTable(data);
+                    succCallback();
+                }
+            }
+        })
+    }
+
+    function fillTable(data) {
+        $("#book-number").val(data.bookNo);
+        $("#book-name").val(data.bookTitle);
+        $("#book-price").val(data.bookPrice);
+    }
+</script>
+</body>
+</html>

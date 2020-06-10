@@ -1,0 +1,12 @@
+[
+  {
+    "bookNo": 1,
+    "bookTitle": "Golang Web 开发实战",
+    "bookPrice": 89.5
+  },
+  {
+    "bookNo": 2,
+    "bookTitle": "Flask 高性能Web服务器开发",
+    "bookPrice": 65.2
+  }
+]

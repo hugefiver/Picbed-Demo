@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8" content="text/html">
+    <title>表格计算</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.min.js"></script>
+    <style>
+        table > tr, td{
+            height: 36px;
+            width: 100px;
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <label for="input-row">表格行数:</label> <input id="input-row" value="5" type="number">
+    <label for="input-col">表格列数:</label> <input id="input-col" value="5" type="number">
+    <input type="button" id="button-create-table" value="创建表格">
+    <input type="button" id="button-compute-table" value="计算合计" disabled>
+    <p></p>
+</div>
+
+<div id="table-div">
+    <p id="refill-warning" hidden>这是上一次的表格: </p>
+    <table id="table-201716080422" border="1" hidden>
+    </table>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $("#button-create-table").click(createTable);
+        $("#button-compute-table").click(computeTable);
+    });
+</script>
+
+<script>
+    var hasTable=false;
+
+    function createTable() {
+        if (hasTable) {
+            alert("已经有一个表格了，接下来创建一个新的表格。");
+            hasTable = false;
+            $('#input-col').prop('disabled', false);
+            $('#input-row').prop('disabled', false);
+            $('#button-compute-table').prop('disabled', true);
+            $('#refill-warning').prop('hidden', false);
+            return;
+        }
+
+        let row = parseInt(document.getElementById("input-row").value);
+        let col = parseInt(document.getElementById("input-col").value);
+        //console.log('row:', row, ', col:', col);
+
+        //check
+        if (isNaN(row) || isNaN(col)) {
+            alert("请正确填入 1~10 的整数。");
+            return;
+        }
+        else if (row < 1 || row > 10 || col < 1 || col > 10) {
+            alert("行数和列数必须是 1~10 之间的整数!!!");
+            return;
+        }
+
+        document.col = col;
+        document.row = row;
+        let table = $('#table-201716080422');
+        table.html('');
+        table.attr("col", col + 2);
+        table.attr("row", row + 2);
+        table.append(mkTableBody(row, col));
+        table.removeAttr('hidden');
+        $('#refill-warning').prop('hidden', true);
+        $('#input-col').prop('disabled', true);
+        $('#input-row').prop('disabled', true);
+        $('#button-compute-table').prop('disabled', false);
+        //$('#button-create-table').prop('disabled', true);
+        hasTable = true;
+    }
+
+    function mkTableBody(row, col) {
+        let resultStr = "<tr>\n<td>&ensp;</td>\n";
+        for (let i = 1; i <= col; i++) {
+            resultStr += ('<td id="{{id}}">{{var}}</td\n>'.replace('{{id}}', "head-"+i)
+                                .replace('{{var}}', '第 '+i+' 列'));
+        }
+        resultStr += "<td>行合计</td>\n</tr>\n";
+
+        for (let r = 1; r <= row; r++) {
+            resultStr += ("<tr>\n<td>第 " + r + " 列</td>\n");
+
+            for (let i = 1; i <= col; i++) {
+                //console.log("正在生成", r, "行", i, "列");
+                resultStr += ('<td id="{{id}}" class="right">{{var}}</td>\n'.replace('{{id}}', r+"-"+i).replace('{{var}}', Math.floor(Math.random()*10)));
+            }
+
+            resultStr += "<td id='row-result-{{id}}' class=\"right\"></td>\n</tr>\n".replace('{{id}}', r);
+        }
+
+        resultStr += "<td>列合计</td>\n";
+        for (let i = 1; i <= col; i++) {
+            resultStr += ('<td id="{{id}}" class="right">{{var}}</td>\n'.replace('{{id}}', "col-result-"+i)
+                .replace('{{var}}', ''));
+        }
+        resultStr += "<td id='all-result' class=\"right\"></td></tr>\n";
+
+        return $(resultStr);
+    }
+
+    function computeTable() {
+        // return if not have table
+        if (!hasTable) {
+            alert("No table.");
+            return;
+        }
+
+        /*t tn = Array();
+        for (let i in Array.from(Array(document.row).keys())) {
+            tn[i] = Array();
+        }*/
+
+        let rr = Array(document.row).fill(0);
+        let cr = Array(document.col).fill(0);
+        for (let r=1; r <= document.row; r++) {
+            for (let c=1; c <= document.col; c++) {
+                let x = parseInt($("#"+r+"-"+c).text());
+                //tn[r-1][c-1] = x;
+                rr[r-1] += x;
+                cr[c-1] += x;
+            }
+        }
+        //console.log("row result:", rr, "\ncol result:", cr);
+        rr.forEach((v, k) => $("#row-result-"+(k+1)).text(v));
+        cr.forEach((v, k) => $("#col-result-"+(k+1)).text(v));
+        //console.log(rr.reduce((p, v) => p+v), cr.reduce((p, v) => p+v),
+        //    rr.reduce((p, v) => p+v)===cr.reduce((p, v) => p+v));
+        $("#all-result").text(rr.reduce((p, v) => p+v));
+    }
+</script>
+</body>
+</html>
